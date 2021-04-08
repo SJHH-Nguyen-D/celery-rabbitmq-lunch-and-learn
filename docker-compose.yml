@@ -1,0 +1,16 @@
+version: '3'
+services:
+  rabbit:
+    image: rabbitmq:latest
+
+  fastapi:
+    # this is a local image that was built from our local Dockerfile 
+    image: celery_simple:latest
+    ports:
+    - 8080:8080
+    entrypoint: uvicorn app:app --host 0.0.0.0 --port 8080
+
+  worker:
+    image: celery_simple:latest
+    entrypoint: celery -A worker.celery_app worker -c 2 --loglevel=info
+
